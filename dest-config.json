@@ -1,0 +1,16 @@
+{
+    "init_data": {
+        "instance": {
+            "existing_destinations_policy": "update",
+            "destinations": [
+		{
+                    "Name": "noAuthPCM",
+                    "Authentication": "NoAuthentication",
+                    "ProxyType": "Internet",
+                    "Type": "HTTP",
+                    "URL": "https://api.sapbestpractices.net"
+              }
+            ]
+        }
+    }
+}

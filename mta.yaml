@@ -1,0 +1,92 @@
+_schema-version: "3.2"
+ID: sap-start-mta
+version: 0.0.1
+modules:
+- name: sap-start-mta-approuter
+  type: approuter.nodejs
+  path: sap-start-mta-approuter
+  requires:
+  - name: sap-start-mta_html_repo_runtime
+  - name: rcm-dest-service
+    group: destinations
+    properties:
+      forwardAuthToken: false
+      name: RCM_srv1
+      url: https://app-srv.dev.regulatory-change-manager.cloud.sap/odata/v4/public
+  - name: sap-start-mta-destination-service
+    group: destinations
+    properties:
+      forwardAuthToken: false
+      name: ui5
+      url: https://ui5.sap.com
+  parameters:
+    domain: dev.regulatory-change-manager.cloud.sap
+    host: app-start-phase
+    disk-quota: 256M
+    memory: 256M
+- name: sap-start-mta_ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: sap-start-mta_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - sapstartui.zip
+      name: sapstartui
+      target-path: resources/
+- name: sapstartui
+  type: html5
+  path: sapstartui
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: sap-start-mta_html_repo_runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-runtime
+- name: sap-start-mta_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+- name: start-uaa
+  parameters:
+    path: ./xs-security.json
+    service-plan: application
+    service: xsuaa
+    type: org.cloudfoundry.managed-service
+- name: sap-start-mta-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: sap-start-mta-destination-service
+    service-plan: lite
+- name: rcm-dest-service
+  parameters:
+    service-plan: lite
+    service: destination
+  type: org.cloudfoundry.managed-service
+parameters:
+  deploy_mode: html5-repo

@@ -1,0 +1,45 @@
+
+  {
+    "list1": {
+      "sap.app": {
+        "id": "sample.CardsLayout.model.object",
+        "type": "card"
+      },
+      "sap.card": {
+        "type": "List",
+        "data": 
+        {
+          "request": 
+          {
+            "url": "{{destinations.myDestination}}/CDS_JIRA_INFO_PUBLIC(company_id='x')/Set?$top=10",
+            "parameters": 
+            {
+              "$format": "json"
+            }
+          },
+          "path": "/value"
+        },
+        "configuration":{
+          "destinations": 
+          {
+            "myDestination": 
+            {
+              "name": "RCM_srv1",
+              "defaultUrl": "/RCM_srv1"
+            }
+          }
+        },
+        "content": {
+          "item": {
+           
+            "title": {
+              "value": "{summary}"
+            },
+            "description": {
+              "value": "{due_date}"
+            }
+          }
+        }
+      }
+    }
+  }
